@@ -1,0 +1,65 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+
+<link rel="import" href="../../layout/shared-styles.html">
+
+<link rel="import" href="./page-view2-list.html">
+<link rel="import" href="./page-view2-right.html">
+
+<link rel="import" href="../../redux-mixin.html">
+<link rel="import" href="../../redux/view2-redux.html">
+<link rel="import" href="../../i18n/page-my-view-i18n.html">
+
+
+
+<dom-module id="page-view2">
+    <template>
+        <style include="shared-styles">
+             :host {
+                display: block;
+            }
+        </style>
+
+        <nylon-toolbar-selector>
+            <app-toolbar>
+                <div main-title>จัดการประชุม [[_params.id]]</div>
+            </app-toolbar class="toolbar-header">
+            <paper-tabs selected="0" scrollable>
+                <paper-tab>กำหนดการ</paper-tab>
+                <paper-tab>เอกสาร</paper-tab>
+                <paper-tab>ห้องประชุม</paper-tab>
+                <paper-tab>อาหาร</paper-tab>
+            </paper-tabs>
+        </nylon-toolbar-selector>
+        <div class="container">
+            <page-view2-list id="list"></page-view2-list>
+            <page-view2-right id="right"></page-view2-right>
+        </div>
+
+       
+
+    </template>
+
+    <script>
+        class pageView2 extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-view2'; }
+            static get properties() {
+                return {
+                    _params: {
+                        type: Object
+                    }
+                }
+            }
+
+            nylonPagesActive() {
+                Nylon.dispatch('view2GetData')
+            }
+
+        }
+        window.customElements.define(pageView2.is, pageView2);
+    </script>
+</dom-module>

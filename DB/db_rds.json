@@ -1,0 +1,32 @@
+{
+  "client": [
+    {
+      "type": "config",
+      "af": "101.50",
+      "radio": "CU101.5",
+      "pi": "2C62",
+      "format": "0A/3A/8A",
+      "encryp": "0",
+      "encid": "0",
+      "c_id": "rds75453",
+      "city": "bangkok",
+      "id": 1
+    }
+  ],
+  "feed": [
+    {
+      "city": "bangkok",
+      "user": "phongsak",
+      "pass": "phongsak@itic",
+      "url": "live.iticfoundation.org/feed/itsth-lowquality-tmc-extent-is-in-wrong-tag-nogreen-bangkok",
+      "id": 1
+    },
+    {
+      "city": "chiangmai",
+      "user": "phongsak",
+      "pass": "phongsak@itic",
+      "url": "live.iticfoundation.org/feed/itsth-lowquality-tmc-extent-is-in-wrong-tag-nogreen-chiangmai",
+      "id": 2
+    }
+  ]
+}

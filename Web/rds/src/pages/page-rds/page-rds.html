@@ -1,0 +1,138 @@
+<link rel="import" href="../../../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../../../bower_components/polymer/lib/elements/dom-repeat.html">
+
+<link rel="import" href="../../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../components/nylon-toolbar-selector/nylon-toolbar-selector.html">
+<link rel="import" href="../../../bower_components/paper-tabs/paper-tabs.html">
+
+<link rel="import" href="../../layout/shared-styles.html">
+
+<link rel="import" href="./page-rds-list.html">
+<link rel="import" href="./page-rds-right.html">
+<link rel="import" href="./page-rds-list2.html">
+<link rel="import" href="./page-rds-right2.html">
+
+<link rel="import" href="../../redux-mixin.html">
+<link rel="import" href="../../redux/rds-redux.html">
+<link rel="import" href="../../i18n/page-rds-i18n.html">
+
+<link rel="import" href="../../../bower_components/iron-pages/iron-pages.html">
+
+
+<dom-module id="page-rds">
+    <template>
+        <style include="shared-styles">
+             :host {
+                display: block;
+            }
+        </style>
+
+        <nylon-toolbar-selector>
+            <app-toolbar>
+                <div main-title>[[i18n.head]] </div>
+            </app-toolbar class="toolbar-header">
+            <paper-tabs selected="{{selected}}" scrollable>
+                <paper-tab>[[i18n.tab1]]</paper-tab>
+                <paper-tab>[[i18n.tab2]]</paper-tab>
+            </paper-tabs>
+        </nylon-toolbar-selector>
+        <div class="container">
+            <iron-pages selected="{{selected}}">
+                <div>
+                    <page-rds-list id="list"></page-rds-list>
+                    <page-rds-right id="right"></page-rds-right>
+                </div>
+                <div>
+                    <page-rds-list2 id="list2"></page-rds-list2>
+                    <page-rds-right2 id="right2"></page-rds-right2>
+                </div>
+            </iron-pages>
+            </div>
+
+    </template>
+
+    <script>
+        class PageRds extends ReduxMixin(Polymer.Element) {
+            static get is() { return 'page-rds'; }
+            static get properties() {
+                return {
+                    _params: {
+                        type: Object
+                    },
+                    selected: {
+                        type: Number,
+                        value: 0
+                    },
+                    i18n: {
+                        type: Object,
+                        statePath: 'i18n.pageRds'
+                    },
+                    client: {
+                        type: Object
+                    }
+                }
+            }
+            ready() {
+                super.ready()
+                // Create a client instance
+                var cid = 'mqttjs_' + Math.random().toString(16).substr(2, 8);
+                window.client = new Paho.MQTT.Client("m10.cloudmqtt.com", 30277, cid);
+                // set callback handlers
+                window.client.onConnectionLost = this.onConnectionLost;
+                window.client.onMessageArrived = this.onMessageArrived;
+                var options = {
+                    useSSL: true,
+                    userName: "ovwnmwny",
+                    password: "zERBTx4cWMeG",
+                    onSuccess: this.onConnect,
+                    onFailure: this.doFail
+                }
+                // connect the client
+                window.client.connect(options);
+            }
+
+            onConnect() {
+                // Once a connection has been made, make a subscription and send a message.
+                console.log("onConnect");
+               // console.log(window.client);
+                // window.client.subscribe("cloudmqtt");
+                // var message = new Paho.MQTT.Message("Hello CloudMQTT ");
+                // message.destinationName = "cloudmqtt";
+                // console.log(message);
+                // window.client.send(message);
+            }
+
+            onPub(e){
+                var all_data = e.type+","+e.c_id+","+e.af+","+e.radio+","+e.pi+","+e.format+","+e.encryp+","+e.encid+","+e.city
+                //window.client.subscribe(e.c_id);
+                var message = new Paho.MQTT.Message(all_data);
+                message.destinationName = e.c_id;
+                console.log(message);
+                window.client.send(message);
+            }
+
+            doFail(e) {
+                console.log(e);
+            }
+
+            // called when the client loses its connection
+            onConnectionLost(responseObject) {
+                if (responseObject.errorCode !== 0) {
+                    console.log("onConnectionLost:" + responseObject.errorMessage);
+                }
+            }
+
+            // called when a message arrives
+            onMessageArrived(message) {
+                console.log("onMessageArrived:" + message.payloadString);
+            }
+
+            nylonPagesActive() {
+                Nylon.dispatch('view2GetData')
+                Nylon.dispatch('view2GetData2')
+            }
+
+        }
+        window.customElements.define(PageRds.is, PageRds);
+    </script>
+</dom-module>

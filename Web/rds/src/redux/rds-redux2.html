@@ -1,0 +1,123 @@
+<script>
+    Nylon.addReducer('rds2', function (state, action) {
+        state = state || {
+            count: 0,
+            select: {}
+        }
+
+        switch (action.type) {
+            case 'VIEW_2_ADD':
+                state.count = ++state.count
+                return state
+            case 'VIEW_2_DEL':
+                state.count = --state.count
+                return state
+            case 'VIEW_2_GET_DATA':
+                state.data2 = action.payload
+                return state
+            case 'VIEW_2_SELECT_DATA':
+                state.select2 = action.payload
+                return state
+            case 'VIEW_2_CLEAR_SELECT':
+                state.select2 = {}
+                return state
+            default:
+                return state
+        }
+        return state
+    })
+
+
+    Nylon.addAction({
+        view2Con:function(arg1){
+            return { type:arg1 }
+        },
+        view2GetData:function(){
+            var progress = Nylon.$['page-rds'].$.list2.$.pc1.progress({position:'top'})
+            
+            return dispatch => {
+                axios.get('/features').then( 
+                    res => {
+                        progress(()=>{
+                            dispatch({type:'VIEW_2_GET_DATA',payload:res.data})
+                        })
+                    }
+                )
+                .catch(
+                    err => {
+                        progress(()=>{
+                            console.log({err})
+                            Nylon.$['page-rds'].$.list2.$.pc1.notify({
+                                status:'error',
+                                //msg:err.response.data.msg,
+                                position:'top'
+                            })
+                        })
+                    }
+                )
+            }
+
+        },
+        view2AddData:function(select){
+            return dispatch => {
+                var progress = Nylon.$['page-rds'].$.right2.$.pc2.progress()
+                axios.post('/features',select).then(
+                    res => {
+                        Nylon.dispatch('view2GetData')
+                        progress( _ => {
+                            Nylon.$['page-rds'].$.right2.$.pr.close()
+                            Nylon.store.dispatch({type:'VIEW_2_CLEAR_SELECT'})
+
+                            Nylon.toast({
+                                msg:'เพิ่มเสร็จสิ้น'
+                            })
+                        })
+                        
+
+                    }
+                )
+            }
+        },
+        view2DelData:function(id){
+            return dispatch => {
+                axios.delete(`/features/${id}`).then( 
+                    res => {
+                        Nylon.dispatch('view2GetData')
+                    }
+                )
+            }
+        },
+        view2SelectData:function(id){
+            return dispatch => {
+                axios.get(`/features/${id}`).then( 
+                    res => {
+                        dispatch({type:'VIEW_2_SELECT_DATA',payload:res.data})
+                        Nylon.$['page-rds'].$.right2.$.pr.open()
+                    }
+                )
+            }
+        },
+        view2EditData:function(select){
+            var progress = Nylon.$['page-rds'].$.right2.$.pc2.progress()
+
+            return dispatch => {
+                axios.put(`/features/${select.id}`,select).then(
+                    res => {
+
+                        progress(()=>{
+                            Nylon.dispatch('view2GetData')
+                            Nylon.$['page-rds'].$.right2.$.pr.close()
+                            Nylon.store.dispatch({type:'VIEW_2_CLEAR_SELECT'})
+
+                            Nylon.toast({
+                                msg:'แก้ไขเสร็จสิ้น'
+                            })
+                        })
+                        
+                    }
+                )
+            }
+        }
+    })
+
+</script>
