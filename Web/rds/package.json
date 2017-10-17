@@ -17,7 +17,8 @@
     "polymer:dist": "polymer serve build/default --port 8081",
     "dev": "npm-run-all --parallel backend polymer:dev",
     "dist": "npm-run-all --parallel backend polymer:dist",
-    "build:dev": "polymer build"
+    "build:dev": "polymer build",
+    "mqtt":"node mqtt_feed.js"
   },
   "dependencies": {
     "async": "^2.5.0",
