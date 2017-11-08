@@ -38,8 +38,16 @@ var feed_data = function () {
                 var locCode = rds_data.TrafficStatus.TrafficMessage[j].Location[0].Segment[0].From[0].locCode;
                 var direction = rds_data.TrafficStatus.TrafficMessage[j].Location[0].Segment[0].From[0].direction;
                 var quantity = rds_data.TrafficStatus.TrafficMessage[j].Event[0].Quantity;
-                var quanttype = rds_data.TrafficStatus.TrafficMessage[j].Event[0].QuantType;
-                var all_data = tag + "," + locCode + "," + direction + "," + quantity + "," + quanttype;
+                var EventCode = rds_data.TrafficStatus.TrafficMessage[j].Event[0].EventCode;
+                var all_data = tag + "," + locCode + "," + direction + "," + quantity + "," + EventCode;
+                
+                // var locCode = rds_data.TrafficStatus.TrafficMessage[j].Location[0].Point[0].locCode;
+                // var direction = rds_data.TrafficStatus.TrafficMessage[j].Location[0].Point[0].direction;
+                // var quantity = rds_data.TrafficStatus.TrafficMessage[j].Event[0].Quantity;
+                // var quanttype = rds_data.TrafficStatus.TrafficMessage[j].Event[0].QuantType;
+                // var all_data = tag + "," + locCode + "," + direction + "," + quantity + "," + quanttype;
+                
+                
                 //console.log(all_data);
                 client2.publish(feed_provider[0].city, all_data, function () {
                     //client2.end(); // Close the connection when published
@@ -100,8 +108,8 @@ client2.on('connect', function () { // When connected
         });
     });
     // publish a message to a topic
-    //feed_data();
-    setInterval(feed_data, 30000);
+    // feed_data();
+    setInterval(feed_data, 60000);
 });
 
 
